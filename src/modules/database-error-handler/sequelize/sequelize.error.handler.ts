@@ -1,6 +1,7 @@
 import { IDatabaseErrorHandler } from '@modules/database-error-handler/database.error.handler.interface';
-import { DataNotFoundError } from '@modules/database-error-handler/errors';
+import { UniqueConstraintFailedError } from '@modules/database-error-handler/errors';
 import { Injectable } from '@nestjs/common';
+import { UniqueConstraintError } from 'sequelize';
 
 /////////////////////////////////////////////////////////////////////
 
@@ -11,8 +12,10 @@ export class SequelizeDatabaseErrorHandler implements IDatabaseErrorHandler {
   }
 
   HandleSequelizeErrors = (error: any) => {
-    if (error.name === 'NotFoundError') {
-      throw new DataNotFoundError(error.message);
+    if (error instanceof UniqueConstraintError) {
+      const fields = Object.keys(error.fields).join();
+      const msg = `${fields} already in use`;
+      throw new UniqueConstraintFailedError(fields, msg);
     }
 
     throw error;
