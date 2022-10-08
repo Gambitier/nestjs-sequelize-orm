@@ -88,6 +88,17 @@ export class UserRepository implements IUserRepository {
         user.userRoles = await UserRole.bulkCreate(roles, {
           transaction,
         });
+
+        // ================= Alternative to bulkCreate ==================
+        // https://github.com/sequelize/sequelize-typescript/#type-safe-usage-of-auto-generated-functions
+        // === But this returned object instead of array of userRoles ===
+        // const userRolesData = await user.$add(
+        //   'userRoles',
+        //   roles.map((item) => new UserRole({ ...item })),
+        //   { transaction },
+        // );
+        // user.userRoles = userRolesData as UserRole[];
+        // ==============================================================
       });
     } catch (err) {
       this._databaseErrorHandler.HandleError(err);
