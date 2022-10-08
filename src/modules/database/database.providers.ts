@@ -32,6 +32,8 @@ export const databaseProviders = [
       }
       const sequelize = new Sequelize(config);
       sequelize.addModels([User, UserRole]); //models goes here
+      // About sequelize.sync
+      // https://stackoverflow.com/a/39689092/7039250
       await sequelize.sync({ force: false });
       return sequelize;
     },
