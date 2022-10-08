@@ -6,6 +6,7 @@ import {
 import { BaseDatabaseError } from '@modules/database-error-handler/errors/base.database.error';
 import {
   ArgumentsHost,
+  BadRequestException,
   Catch,
   ExceptionFilter,
   HttpException,
@@ -37,8 +38,12 @@ export class AllExceptionsFilter implements ExceptionFilter {
     let mesage =
       error instanceof HttpException ? error.message : 'Something went wrong';
 
+    let errors;
+
     if (error instanceof BaseDatabaseError) {
       ({ httpStatus, mesage } = this.mapDatabaseError(error));
+    } else if (error instanceof BadRequestException) {
+      errors = error.getResponse()['message'];
     }
 
     const responseBody: ExceptionResponseBody = {
@@ -46,6 +51,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
       timestamp: new Date().toISOString(),
       path: httpAdapter.getRequestUrl(ctx.getRequest()),
       message: mesage,
+      errors: errors,
     };
 
     this._logger.error({
