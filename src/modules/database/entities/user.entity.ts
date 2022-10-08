@@ -84,18 +84,17 @@ export class User extends Model<User> {
 
   @Column({
     type: DataType.DATEONLY,
-    values: ['male', 'female'],
-    allowNull: false,
+    allowNull: true,
   })
   dateOfBirth: Date;
 
   @Column
   @CreatedAt
-  CreatedAt: Date;
+  createdAt: Date;
 
   @UpdatedAt
-  UpdatedAt: Date;
+  updatedAt: Date;
 
   @DeletedAt
-  DeletedAt: Date;
+  deletedAt: Date;
 }
