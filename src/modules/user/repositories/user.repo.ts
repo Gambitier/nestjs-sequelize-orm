@@ -43,8 +43,19 @@ export class UserRepository implements IUserRepository {
   async createUser(user: CreateUserDomainModel): Promise<UserDomainModel> {
     let data: User;
 
+    const userRoles = user.userRoles.map((userRole) => {
+      const role = {
+        role: userRole as string,
+      };
+
+      return role;
+    });
+
     try {
-      data = await User.create<User>(user);
+      data = await User.create<User>({
+        ...user,
+        userRoles: userRoles,
+      });
     } catch (err) {
       this._databaseErrorHandler.HandleError(err);
     }

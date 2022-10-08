@@ -1,10 +1,12 @@
 import { USER_TABLE_NAME } from '@modules/database/constants';
+import { UserRole } from '@modules/database/entities/user.role';
 import { GenderEnum } from '@modules/user/enums/gender.enum';
 import {
   Column,
   CreatedAt,
   DataType,
   DeletedAt,
+  HasMany,
   IsUUID,
   Model,
   PrimaryKey,
@@ -31,6 +33,9 @@ export class User extends Model<User> {
     allowNull: false,
   })
   id: string;
+
+  @HasMany(() => UserRole)
+  userRoles: UserRole[];
 
   @Column({
     type: DataType.STRING,
