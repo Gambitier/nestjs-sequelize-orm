@@ -1,3 +1,4 @@
+import { USER_TABLE_NAME } from '@modules/database/constants';
 import {
   Column,
   CreatedAt,
@@ -11,7 +12,13 @@ import {
 } from 'sequelize-typescript';
 import { v4 } from 'uuid';
 
-@Table
+@Table({
+  timestamps: true,
+  modelName: 'User',
+  tableName: USER_TABLE_NAME,
+  paranoid: true,
+  freezeTableName: true,
+})
 export class User extends Model<User> {
   @IsUUID(4)
   @PrimaryKey
