@@ -1,5 +1,5 @@
 import { USER_TABLE_NAME } from '@modules/database/constants';
-import { UserRole } from '@modules/database/entities/user.role';
+import { UserRole } from '@modules/database/entities/user.role.entity';
 import { GenderEnum } from '@modules/user/enums/gender.enum';
 import {
   Column,
