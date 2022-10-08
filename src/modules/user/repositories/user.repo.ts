@@ -1,6 +1,7 @@
 import { UserRoleEnum } from '@modules/auth/common';
 import { UpdatePasswordDto } from '@modules/auth/dto';
 import { IDatabaseErrorHandler } from '@modules/database-error-handler/database.error.handler.interface';
+import { Database } from '@modules/database/database.providers';
 import { User } from '@modules/database/entities/user.entity';
 import {
   UserRole,
@@ -13,6 +14,8 @@ import {
 import { GenderEnum } from '@modules/user/enums/gender.enum';
 import { IUserRepository } from '@modules/user/repositories/user.repo.interface';
 import { Inject, Injectable } from '@nestjs/common';
+import { Transaction } from 'sequelize';
+
 /////////////////////////////////////////////////////
 
 @Injectable()
@@ -64,13 +67,28 @@ export class UserRepository implements IUserRepository {
       'userRoles'
     >;
 
+    const sequelize = await Database.instance().getSequelizeInstance();
+
     let user: User;
     try {
-      user = await User.create<User>(userCreateArgs);
-      roles.forEach((role) => {
-        role.userId = user.id;
+      await sequelize.transaction(async (transaction: Transaction) => {
+        user = await User.create<User>(userCreateArgs, {
+          transaction,
+        });
+
+        // for any errors, transaction will be rolled back
+        // if (user) {
+        //   throw new Error('temp');
+        // }
+
+        roles.forEach((role) => {
+          role.userId = user.id;
+        });
+
+        user.userRoles = await UserRole.bulkCreate(roles, {
+          transaction,
+        });
       });
-      user.userRoles = await UserRole.bulkCreate(roles);
     } catch (err) {
       this._databaseErrorHandler.HandleError(err);
     }
