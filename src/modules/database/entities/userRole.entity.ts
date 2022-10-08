@@ -27,11 +27,9 @@ interface UserRoleAttributes {
   deletedAt: Date;
 }
 
-type UserRoleCreationAttributes = Optional<
+export type UserRoleCreationAttributes = Optional<
   UserRoleAttributes,
-  'id' | 'createdAt' | 'updatedAt' | 'deletedAt'
-  // TODO should we include props => 'user' | 'userId'
-  // 'id' | 'createdAt' | 'updatedAt' | 'deletedAt' | 'user' | 'userId'
+  'id' | 'deletedAt' | 'user'
 >;
 
 @Table({

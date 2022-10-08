@@ -3,10 +3,13 @@ import { UpdatePasswordDto } from '@modules/auth/dto';
 import { IDatabaseErrorHandler } from '@modules/database-error-handler/database.error.handler.interface';
 import { User } from '@modules/database/entities/user.entity';
 import {
+  UserRole,
+  UserRoleCreationAttributes,
+} from '@modules/database/entities/userRole.entity';
+import {
   CreateUserDomainModel,
   UserDomainModel,
 } from '@modules/user/domain.types/user';
-import { UserRoleDomainModel } from '@modules/user/domain.types/user.role/user.role.domain.model';
 import { GenderEnum } from '@modules/user/enums/gender.enum';
 import { IUserRepository } from '@modules/user/repositories/user.repo.interface';
 import { Inject, Injectable } from '@nestjs/common';
@@ -44,8 +47,12 @@ export class UserRepository implements IUserRepository {
     userCreateDomainModel: CreateUserDomainModel,
   ): Promise<UserDomainModel> {
     const roles = userCreateDomainModel.userRoles.map((userRole) => {
-      const role = {
+      const dateTimeNow = new Date();
+      const role: UserRoleCreationAttributes = {
         role: userRole as string,
+        userId: null,
+        createdAt: dateTimeNow,
+        updatedAt: dateTimeNow,
       };
 
       return role;
@@ -60,32 +67,23 @@ export class UserRepository implements IUserRepository {
     let user: User;
     try {
       user = await User.create<User>(userCreateArgs);
-      // const userRoles = await UserRole.bulkCreate([roles]);
-      // user.hasUserRoles(userRoles);
+      roles.forEach((role) => {
+        role.userId = user.id;
+      });
+      user.userRoles = await UserRole.bulkCreate(roles);
     } catch (err) {
       this._databaseErrorHandler.HandleError(err);
     }
 
-    const userRole: UserRoleDomainModel = {
-      id: 'TODO',
-      role: UserRoleEnum.USER,
-      userId: 'TODO',
-      createdAt: new Date(),
-    };
-
     const domainModel: UserDomainModel = {
-      id: user.id,
-      prefix: user.prefix,
-      firstName: user.firstName,
-      middleName: user.middleName,
-      lastName: user.lastName,
-      email: user.email,
-      phone: user.phone,
-      password: user.password,
+      ...user['dataValues'],
       gender: user.gender as GenderEnum,
-      dateOfBirth: undefined,
-      createdAt: undefined,
-      userRoles: [userRole],
+      userRoles: user.userRoles.map((role) => {
+        return {
+          ...role['dataValues'],
+          role: role.role as UserRoleEnum,
+        };
+      }),
     };
 
     return domainModel;

@@ -35,7 +35,7 @@ interface UserAttributes {
 
 type UserCreationAttributes = Optional<
   UserAttributes,
-  'id' | 'createdAt' | 'updatedAt' | 'deletedAt' | 'userRoles'
+  'id' | 'deletedAt' | 'userRoles'
 >;
 
 @Table({
