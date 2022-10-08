@@ -1,5 +1,10 @@
 # Nestjs & Sequelize
 
+## Nestjs Architeture
+
+![image](https://user-images.githubusercontent.com/22792359/194728595-2668569d-aa02-4804-8798-ce7900b461c6.png)
+
+
 ## Sequelize and Database Setup
 
 ref
