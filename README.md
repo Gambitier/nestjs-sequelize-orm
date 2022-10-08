@@ -11,3 +11,13 @@ ref
 npm install --save sequelize sequelize-typescript pg-hstore pg
 npm install --save-dev @types/sequelize
 ```
+
+## setup Sequelize migration in a NestJS Project
+
+ref: [setup Sequelize migration in a NestJS Project](https://victoronwuzor.medium.com/how-to-setup-sequelize-migration-in-a-nestjs-project-b4aec1f88612)
+
+```
+npm i -g @nestjs/cli
+```
+
+
