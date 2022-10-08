@@ -1,5 +1,10 @@
 # Nestjs & Sequelize
 
+## Nestjs Architeture
+
+![image](https://user-images.githubusercontent.com/22792359/194728595-2668569d-aa02-4804-8798-ce7900b461c6.png)
+
+
 ## Sequelize and Database Setup
 
 ref
@@ -12,7 +17,7 @@ npm install --save sequelize sequelize-typescript pg-hstore pg
 npm install --save-dev @types/sequelize
 ```
 
-## setup Sequelize migration in a NestJS Project
+## Setup Sequelize migration in a NestJS Project
 
 ref: [setup Sequelize migration in a NestJS Project](https://victoronwuzor.medium.com/how-to-setup-sequelize-migration-in-a-nestjs-project-b4aec1f88612)
 
@@ -20,4 +25,8 @@ ref: [setup Sequelize migration in a NestJS Project](https://victoronwuzor.mediu
 npm i -g @nestjs/cli
 ```
 
+## Sequelize Related Notes
 
+1. [How to make insert with relations](https://github.com/sequelize/sequelize-typescript/issues/723)
+
+    ![image](https://user-images.githubusercontent.com/22792359/194730042-fd347226-804f-451f-9a08-336e2fce7a09.png)
