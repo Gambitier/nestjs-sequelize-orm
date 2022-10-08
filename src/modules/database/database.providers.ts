@@ -28,7 +28,7 @@ export const databaseProviders = [
       }
       const sequelize = new Sequelize(config);
       sequelize.addModels([User]); //models goes here
-      await sequelize.sync();
+      await sequelize.sync({ force: true });
       return sequelize;
     },
   },
