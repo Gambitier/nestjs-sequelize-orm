@@ -38,6 +38,8 @@ export class User extends Model<User> {
   @HasMany(() => UserRole)
   userRoles: UserRole[];
 
+  // createUserRoles: HasManyCreateAssociationMixin<UserRole>;
+
   @Column({
     type: DataType.STRING,
     allowNull: false,

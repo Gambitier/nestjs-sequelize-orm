@@ -40,10 +40,10 @@ export class UserRepository implements IUserRepository {
     throw new Error('Method not implemented.');
   }
 
-  async createUser(user: CreateUserDomainModel): Promise<UserDomainModel> {
-    let data: User;
-
-    const userRoles = user.userRoles.map((userRole) => {
+  async createUser(
+    userCreateDomainModel: CreateUserDomainModel,
+  ): Promise<UserDomainModel> {
+    const roles = userCreateDomainModel.userRoles.map((userRole) => {
       const role = {
         role: userRole as string,
       };
@@ -51,11 +51,17 @@ export class UserRepository implements IUserRepository {
       return role;
     });
 
+    delete userCreateDomainModel.userRoles;
+    const userCreateArgs = userCreateDomainModel as Omit<
+      CreateUserDomainModel,
+      'userRoles'
+    >;
+
+    let user: User;
     try {
-      data = await User.create<User>({
-        ...user,
-        userRoles: userRoles,
-      });
+      user = await User.create<User>(userCreateArgs);
+      // const userRoles = await UserRole.bulkCreate([roles]);
+      // user.hasUserRoles(userRoles);
     } catch (err) {
       this._databaseErrorHandler.HandleError(err);
     }
@@ -68,15 +74,15 @@ export class UserRepository implements IUserRepository {
     };
 
     const domainModel: UserDomainModel = {
-      id: data.id,
-      prefix: data.prefix,
-      firstName: data.firstName,
-      middleName: data.middleName,
-      lastName: data.lastName,
-      email: data.email,
-      phone: data.phone,
-      password: data.password,
-      gender: data.gender as GenderEnum,
+      id: user.id,
+      prefix: user.prefix,
+      firstName: user.firstName,
+      middleName: user.middleName,
+      lastName: user.lastName,
+      email: user.email,
+      phone: user.phone,
+      password: user.password,
+      gender: user.gender as GenderEnum,
       dateOfBirth: undefined,
       createdAt: undefined,
       userRoles: [userRole],
