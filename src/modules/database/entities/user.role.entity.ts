@@ -46,7 +46,9 @@ export class UserRole extends Model<UserRole> {
   @Column
   userId: string;
 
-  @BelongsTo(() => User)
+  @BelongsTo(() => User, {
+    targetKey: 'id',
+  })
   user: User;
 
   @Column
