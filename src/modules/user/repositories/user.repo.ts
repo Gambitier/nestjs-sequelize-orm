@@ -41,34 +41,36 @@ export class UserRepository implements IUserRepository {
   }
 
   async createUser(user: CreateUserDomainModel): Promise<UserDomainModel> {
+    let data: User;
+
     try {
-      const data: User = await User.create<User>(user);
-
-      const userRole: UserRoleDomainModel = {
-        id: 'TODO',
-        role: UserRoleEnum.USER,
-        userId: 'TODO',
-        createdAt: new Date(),
-      };
-
-      const domainModel: UserDomainModel = {
-        id: data.id,
-        prefix: data.prefix,
-        firstName: data.firstName,
-        middleName: data.middleName,
-        lastName: data.lastName,
-        email: data.email,
-        phone: data.phone,
-        password: data.password,
-        gender: data.gender as GenderEnum,
-        dateOfBirth: undefined,
-        createdAt: undefined,
-        userRoles: [userRole],
-      };
-
-      return domainModel;
+      data = await User.create<User>(user);
     } catch (err) {
-      console.error(err.message);
+      this._databaseErrorHandler.HandleError(err);
     }
+
+    const userRole: UserRoleDomainModel = {
+      id: 'TODO',
+      role: UserRoleEnum.USER,
+      userId: 'TODO',
+      createdAt: new Date(),
+    };
+
+    const domainModel: UserDomainModel = {
+      id: data.id,
+      prefix: data.prefix,
+      firstName: data.firstName,
+      middleName: data.middleName,
+      lastName: data.lastName,
+      email: data.email,
+      phone: data.phone,
+      password: data.password,
+      gender: data.gender as GenderEnum,
+      dateOfBirth: undefined,
+      createdAt: undefined,
+      userRoles: [userRole],
+    };
+
+    return domainModel;
   }
 }
