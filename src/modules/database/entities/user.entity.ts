@@ -1,4 +1,5 @@
 import { USER_TABLE_NAME } from '@modules/database/constants';
+import { GenderEnum } from '@modules/user/enums/gender.enum';
 import {
   Column,
   CreatedAt,
@@ -77,7 +78,12 @@ export class User extends Model<User> {
 
   @Column({
     type: DataType.ENUM,
-    values: ['male', 'female'],
+    values: [
+      GenderEnum.FEMALE,
+      GenderEnum.MALE,
+      GenderEnum.OTHER,
+      GenderEnum.UNSPECIFIED,
+    ],
     allowNull: false,
   })
   gender: string;

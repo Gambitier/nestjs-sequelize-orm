@@ -15,7 +15,7 @@ console.dir(
   { depth: null },
 );
 
-export const databaseConfig: IDatabaseConfig = {
+const databaseConfig: IDatabaseConfig = {
   development: {
     username: process.env.DB_USER,
     password: process.env.DB_PASS,

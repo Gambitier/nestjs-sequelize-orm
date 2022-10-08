@@ -5,8 +5,11 @@ import {
   TEST,
 } from '@modules/database/constants';
 import { User } from '@modules/database/entities/user.entity';
+import { IDatabaseConfig } from '@modules/database/interfaces/IDbConfig';
 import { Sequelize } from 'sequelize-typescript';
-import { databaseConfig } from './database.config';
+import * as databaseConfig from './database.config';
+
+const dbConfig = databaseConfig as unknown as IDatabaseConfig;
 
 export const databaseProviders = [
   {
@@ -15,20 +18,20 @@ export const databaseProviders = [
       let config;
       switch (process.env.NODE_ENV) {
         case DEVELOPMENT:
-          config = databaseConfig.development;
+          config = dbConfig.development;
           break;
         case TEST:
-          config = databaseConfig.test;
+          config = dbConfig.test;
           break;
         case PRODUCTION:
-          config = databaseConfig.production;
+          config = dbConfig.production;
           break;
         default:
-          config = databaseConfig.development;
+          config = dbConfig.development;
       }
       const sequelize = new Sequelize(config);
       sequelize.addModels([User]); //models goes here
-      await sequelize.sync({ force: true });
+      await sequelize.sync({ force: false });
       return sequelize;
     },
   },
