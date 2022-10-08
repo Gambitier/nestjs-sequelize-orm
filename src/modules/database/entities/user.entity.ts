@@ -26,11 +26,12 @@ export class User extends Model<User> {
   @IsUUID(4)
   @PrimaryKey
   @Column({
-    type: DataType.UUID,
+    type: DataType.UUIDV4,
     defaultValue: () => {
       return v4();
     },
     allowNull: false,
+    primaryKey: true,
   })
   id: string;
 
@@ -65,6 +66,9 @@ export class User extends Model<User> {
     type: DataType.STRING,
     unique: true,
     allowNull: false,
+    validate: {
+      isEmail: { msg: 'Invalid Email Address Provided!' },
+    },
   })
   email: string;
 
@@ -72,6 +76,11 @@ export class User extends Model<User> {
     type: DataType.STRING,
     unique: true,
     allowNull: false,
+    validate: {
+      isNumeric: {
+        msg: 'Phone number should not contain any special characters!',
+      },
+    },
   })
   phone: string;
 
@@ -103,9 +112,11 @@ export class User extends Model<User> {
   @CreatedAt
   createdAt: Date;
 
+  @Column
   @UpdatedAt
   updatedAt: Date;
 
+  @Column
   @DeletedAt
   deletedAt: Date;
 }
