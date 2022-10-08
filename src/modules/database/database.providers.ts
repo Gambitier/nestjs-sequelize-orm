@@ -4,8 +4,6 @@ import {
   SEQUELIZE,
   TEST,
 } from '@modules/database/constants';
-import { User } from '@modules/database/entities/user.entity';
-import { UserRole } from '@modules/database/entities/user.role';
 import { IDatabaseConfig } from '@modules/database/interfaces/IDbConfig';
 import { Sequelize } from 'sequelize-typescript';
 import * as databaseConfig from './database.config';
@@ -31,7 +29,7 @@ export const databaseProviders = [
           config = dbConfig.development;
       }
       const sequelize = new Sequelize(config);
-      sequelize.addModels([User, UserRole]); //models goes here
+      sequelize.addModels([__dirname + '/entities']); //models goes here
       // About sequelize.sync
       // https://stackoverflow.com/a/39689092/7039250
       await sequelize.sync({ force: false });
