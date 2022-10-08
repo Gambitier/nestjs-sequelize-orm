@@ -1,5 +1,6 @@
 import { IDatabaseErrorHandler } from '@modules/database-error-handler/database.error.handler.interface';
 import { UniqueConstraintFailedError } from '@modules/database-error-handler/errors';
+import { BaseDatabaseError } from '@modules/database-error-handler/errors/base.database.error';
 import { ForeignKeyConstraintFailedError } from '@modules/database-error-handler/errors/foreignKey.constraint.failed.error';
 import { Injectable } from '@nestjs/common';
 import { ForeignKeyConstraintError, UniqueConstraintError } from 'sequelize';
@@ -20,6 +21,8 @@ export class SequelizeDatabaseErrorHandler implements IDatabaseErrorHandler {
     } else if (error instanceof ForeignKeyConstraintError) {
       const msg = 'foreign key error occured';
       throw new ForeignKeyConstraintFailedError('fields', msg);
+    } else if (error.name === 'SequelizeDatabaseError') {
+      throw new BaseDatabaseError(error.message);
     }
 
     throw error;

@@ -38,10 +38,10 @@ export class AllExceptionsFilter implements ExceptionFilter {
     let mesage =
       error instanceof HttpException ? error.message : 'Something went wrong';
 
-    let errors;
+    let errors, databaseErrors;
 
     if (error instanceof BaseDatabaseError) {
-      ({ httpStatus, mesage } = this.mapDatabaseError(error));
+      ({ httpStatus, mesage, databaseErrors } = this.mapDatabaseError(error));
     } else if (error instanceof BadRequestException) {
       errors = error.getResponse()['message'];
     }
@@ -52,6 +52,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
       path: httpAdapter.getRequestUrl(ctx.getRequest()),
       message: mesage,
       errors: errors,
+      databaseErrors: databaseErrors, // TODO allow only for dev env
     };
 
     this._logger.error({
@@ -71,6 +72,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     let httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
     let mesage = 'Something went wrong with database operation';
 
+    const databaseErrors = [error.message];
     if (error instanceof DataNotFoundError) {
       httpStatus = HttpStatus.BAD_REQUEST;
       mesage = error.message;
@@ -79,6 +81,6 @@ export class AllExceptionsFilter implements ExceptionFilter {
       mesage = error.message;
     }
 
-    return { httpStatus, mesage };
+    return { httpStatus, mesage, databaseErrors };
   }
 }
