@@ -1,6 +1,7 @@
 import { UserRoleEnum } from '@modules/auth/common';
 import { USER_ROLE_TABLE_NAME } from '@modules/database/constants';
 import { User } from '@modules/database/entities/user.entity';
+import { Optional } from 'sequelize';
 import {
   BelongsTo,
   Column,
@@ -16,6 +17,23 @@ import {
 } from 'sequelize-typescript';
 import { v4 } from 'uuid';
 
+interface UserRoleAttributes {
+  id: string;
+  role: string;
+  userId: string;
+  user: User;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt: Date;
+}
+
+type UserRoleCreationAttributes = Optional<
+  UserRoleAttributes,
+  'id' | 'createdAt' | 'updatedAt' | 'deletedAt'
+  // TODO should we include props => 'user' | 'userId'
+  // 'id' | 'createdAt' | 'updatedAt' | 'deletedAt' | 'user' | 'userId'
+>;
+
 @Table({
   timestamps: true,
   modelName: 'UserRole',
@@ -23,7 +41,10 @@ import { v4 } from 'uuid';
   paranoid: true,
   freezeTableName: true,
 })
-export class UserRole extends Model<UserRole> {
+export class UserRole extends Model<
+  UserRoleAttributes,
+  UserRoleCreationAttributes
+> {
   @IsUUID(4)
   @PrimaryKey
   @Column({

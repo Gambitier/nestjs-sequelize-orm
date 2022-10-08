@@ -1,6 +1,7 @@
 import { USER_TABLE_NAME } from '@modules/database/constants';
 import { UserRole } from '@modules/database/entities/userRole.entity';
 import { GenderEnum } from '@modules/user/enums/gender.enum';
+import { Optional } from 'sequelize';
 import {
   Column,
   CreatedAt,
@@ -15,6 +16,28 @@ import {
 } from 'sequelize-typescript';
 import { v4 } from 'uuid';
 
+interface UserAttributes {
+  id: string;
+  prefix: string;
+  firstName: string;
+  middleName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  gender: string;
+  password: string;
+  dateOfBirth: Date;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt: Date;
+  userRoles: UserRole[];
+}
+
+type UserCreationAttributes = Optional<
+  UserAttributes,
+  'id' | 'createdAt' | 'updatedAt' | 'deletedAt' | 'userRoles'
+>;
+
 @Table({
   timestamps: true,
   modelName: 'User',
@@ -22,7 +45,7 @@ import { v4 } from 'uuid';
   paranoid: true,
   freezeTableName: true,
 })
-export class User extends Model<User> {
+export class User extends Model<UserAttributes, UserCreationAttributes> {
   @IsUUID(4)
   @PrimaryKey
   @Column({
