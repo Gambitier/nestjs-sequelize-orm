@@ -3,10 +3,13 @@ import { UpdatePasswordDto } from '@modules/auth/dto';
 import { IDatabaseErrorHandler } from '@modules/database-error-handler/database.error.handler.interface';
 import { User } from '@modules/database/entities/user.entity';
 import {
+  UserRole,
+  UserRoleCreationAttributes,
+} from '@modules/database/entities/userRole.entity';
+import {
   CreateUserDomainModel,
   UserDomainModel,
 } from '@modules/user/domain.types/user';
-import { UserRoleDomainModel } from '@modules/user/domain.types/user.role/user.role.domain.model';
 import { GenderEnum } from '@modules/user/enums/gender.enum';
 import { IUserRepository } from '@modules/user/repositories/user.repo.interface';
 import { Inject, Injectable } from '@nestjs/common';
@@ -40,35 +43,47 @@ export class UserRepository implements IUserRepository {
     throw new Error('Method not implemented.');
   }
 
-  async createUser(user: CreateUserDomainModel): Promise<UserDomainModel> {
-    let data: User;
+  async createUser(
+    userCreateDomainModel: CreateUserDomainModel,
+  ): Promise<UserDomainModel> {
+    const roles = userCreateDomainModel.userRoles.map((userRole) => {
+      const dateTimeNow = new Date();
+      const role: UserRoleCreationAttributes = {
+        role: userRole as string,
+        userId: null,
+        createdAt: dateTimeNow,
+        updatedAt: dateTimeNow,
+      };
 
+      return role;
+    });
+
+    delete userCreateDomainModel.userRoles;
+    const userCreateArgs = userCreateDomainModel as Omit<
+      CreateUserDomainModel,
+      'userRoles'
+    >;
+
+    let user: User;
     try {
-      data = await User.create<User>(user);
+      user = await User.create<User>(userCreateArgs);
+      roles.forEach((role) => {
+        role.userId = user.id;
+      });
+      user.userRoles = await UserRole.bulkCreate(roles);
     } catch (err) {
       this._databaseErrorHandler.HandleError(err);
     }
 
-    const userRole: UserRoleDomainModel = {
-      id: 'TODO',
-      role: UserRoleEnum.USER,
-      userId: 'TODO',
-      createdAt: new Date(),
-    };
-
     const domainModel: UserDomainModel = {
-      id: data.id,
-      prefix: data.prefix,
-      firstName: data.firstName,
-      middleName: data.middleName,
-      lastName: data.lastName,
-      email: data.email,
-      phone: data.phone,
-      password: data.password,
-      gender: data.gender as GenderEnum,
-      dateOfBirth: undefined,
-      createdAt: undefined,
-      userRoles: [userRole],
+      ...user['dataValues'],
+      gender: user.gender as GenderEnum,
+      userRoles: user.userRoles.map((role) => {
+        return {
+          ...role['dataValues'],
+          role: role.role as UserRoleEnum,
+        };
+      }),
     };
 
     return domainModel;
