@@ -1,5 +1,5 @@
 import { USER_TABLE_NAME } from '@modules/database/constants';
-import { UserRole } from '@modules/database/entities/user.role.entity';
+import { UserRole } from '@modules/database/entities/userRole.entity';
 import { GenderEnum } from '@modules/user/enums/gender.enum';
 import {
   Column,
@@ -26,7 +26,7 @@ export class User extends Model<User> {
   @IsUUID(4)
   @PrimaryKey
   @Column({
-    type: DataType.UUIDV4,
+    type: DataType.UUID,
     defaultValue: () => {
       return v4();
     },

@@ -43,10 +43,14 @@ export class UserRole extends Model<UserRole> {
   role: string;
 
   @ForeignKey(() => User)
-  @Column
+  @Column({
+    type: DataType.UUID,
+    allowNull: false,
+  })
   userId: string;
 
   @BelongsTo(() => User, {
+    keyType: DataType.UUID,
     targetKey: 'id',
   })
   user: User;
