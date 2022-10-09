@@ -1,5 +1,12 @@
 # Nestjs & Sequelize
 
+## Usage
+
+1. Copy `.env.sample` to same location and rename it to `.env`
+2. Create database with name set in the `.env` file with key `DB_NAME_DEVELOPMENT`
+3. Run the command `npm install`
+4. To run the server in the watch mode, use command `npm run start:dev`
+
 ## Nestjs Architeture
 
 ![image](https://user-images.githubusercontent.com/22792359/194728595-2668569d-aa02-4804-8798-ce7900b461c6.png)
