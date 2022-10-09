@@ -7,6 +7,6 @@ import { Module } from '@nestjs/common';
   imports: [DatabaseModule],
   controllers: [EducationInstituteController],
   providers: [EducationInstituteServiceProvider],
-  exports: [],
+  exports: [EducationInstituteServiceProvider],
 })
 export class EducationInstituteModule {}

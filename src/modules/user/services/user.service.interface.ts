@@ -11,6 +11,7 @@ export const IUserService = Symbol('IUserService');
 
 export interface IUserService {
   createUserEducationInstitute(
+    userId: string,
     educationInstituteId: string,
     dto: CreateUserEducationInstituteDto,
   ): Promise<boolean>;
