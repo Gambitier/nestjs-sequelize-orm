@@ -124,7 +124,8 @@ export class UserRepository implements IUserRepository {
 
     // ================= Alternative to bulkCreate ==================
     // https://github.com/sequelize/sequelize-typescript/#type-safe-usage-of-auto-generated-functions
-    // === But this returned object instead of array of userRoles ===
+    // https://sequelize.org/docs/v6/core-concepts/assocs/#special-methodsmixins-added-to-instances
+    // === TODO: fix: But this returned object instead of array of userRoles ===
     // const userRolesData = await user.$add(
     //   'userRoles',
     //   roles.map((item) => new UserRole({ ...item })),
