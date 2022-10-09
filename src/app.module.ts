@@ -3,6 +3,7 @@ import { JwtGuard, RolesGuard } from '@modules/auth/common';
 import { CommunicationModule } from '@modules/communication/communication.module';
 import { DatabaseErrorHandlerModule } from '@modules/database-error-handler/database.error.handler.module';
 import { DatabaseModule } from '@modules/database/database.module';
+import { EducationInstituteModule } from '@modules/education-institute/education.institute.module';
 import { UserModule } from '@modules/user/user.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { Module } from '@nestjs/common';
@@ -87,6 +88,7 @@ import { APIResponseInterceptor } from 'src/interceptors/api.response.intercepto
     AuthModule,
     DatabaseErrorHandlerModule,
     CommunicationModule,
+    EducationInstituteModule,
   ],
   controllers: [],
   providers: [

@@ -1,4 +1,6 @@
 import { UpdatePasswordDto } from '@modules/auth/dto';
+import { CreateUserEducationInstituteDto } from '@modules/education-institute/dto/request-dto/create.user.eduction.institute.dto';
+import { IEducationInstituteService } from '@modules/education-institute/services';
 import {
   CreateUserDomainModel,
   UserDomainModel,
@@ -15,28 +17,45 @@ export class UserService implements IUserService {
    *
    */
   constructor(
+    @Inject(IEducationInstituteService)
+    private readonly _educationInstituteService: IEducationInstituteService,
     @Inject(IUserRepository)
-    private userRepository: IUserRepository,
+    private readonly _userRepository: IUserRepository,
   ) {
     //
+  }
+
+  async createUserEducationInstitute(
+    userId: string,
+    educationInstituteId: string,
+    dto: CreateUserEducationInstituteDto,
+  ): Promise<boolean> {
+    const created: boolean =
+      await this._educationInstituteService.createEducationInstituteForUser(
+        userId,
+        educationInstituteId,
+        dto,
+      );
+
+    return created;
   }
 
   resetUserPassword(
     updatePasswordDto: UpdatePasswordDto,
     userId: string,
   ): Promise<boolean> {
-    return this.userRepository.updatePassword(userId, updatePasswordDto);
+    return this._userRepository.updatePassword(userId, updatePasswordDto);
   }
 
   findFirstByIdOrThrow(userId: string): Promise<UserDomainModel> {
-    return this.userRepository.findFirstByIdOrThrow(userId);
+    return this._userRepository.findFirstByIdOrThrow(userId);
   }
 
   findFirstByEmailOrThrow(email: string): Promise<UserDomainModel> {
-    return this.userRepository.findFirstByEmailOrThrow(email);
+    return this._userRepository.findFirstByEmailOrThrow(email);
   }
 
   createUser(model: CreateUserDomainModel): Promise<UserDomainModel> {
-    return this.userRepository.createUser(model);
+    return this._userRepository.createUser(model);
   }
 }
