@@ -75,33 +75,12 @@ export class UserRepository implements IUserRepository {
     let user: User;
     try {
       await sequelize.transaction(async (transaction: Transaction) => {
-        user = await User.create<User>(userCreateArgs, {
+        user = await this.createUserWithUserRoles(
+          user,
+          userCreateArgs,
           transaction,
-        });
-
-        // for any errors, transaction will be rolled back
-        // if (user) {
-        //   throw new Error('temp');
-        // }
-
-        roles.forEach((role) => {
-          role.userId = user.id;
-        });
-
-        user.userRoles = await UserRole.bulkCreate(roles, {
-          transaction,
-        });
-
-        // ================= Alternative to bulkCreate ==================
-        // https://github.com/sequelize/sequelize-typescript/#type-safe-usage-of-auto-generated-functions
-        // === But this returned object instead of array of userRoles ===
-        // const userRolesData = await user.$add(
-        //   'userRoles',
-        //   roles.map((item) => new UserRole({ ...item })),
-        //   { transaction },
-        // );
-        // user.userRoles = userRolesData as UserRole[];
-        // ==============================================================
+          roles,
+        );
       });
     } catch (err) {
       this._databaseErrorHandler.HandleError(err);
@@ -119,5 +98,40 @@ export class UserRepository implements IUserRepository {
     };
 
     return domainModel;
+  }
+
+  private async createUserWithUserRoles(
+    user: User,
+    userCreateArgs: UserCreateDomainModelWithoutUserRoles,
+    transaction: Transaction,
+    roles: UserRoleCreationAttributes[],
+  ) {
+    user = await User.create<User>(userCreateArgs, {
+      transaction,
+    });
+
+    // for any errors, transaction will be rolled back
+    // if (user) {
+    //   throw new Error('temp');
+    // }
+    roles.forEach((role) => {
+      role.userId = user.id;
+    });
+
+    user.userRoles = await UserRole.bulkCreate(roles, {
+      transaction,
+    });
+
+    // ================= Alternative to bulkCreate ==================
+    // https://github.com/sequelize/sequelize-typescript/#type-safe-usage-of-auto-generated-functions
+    // === But this returned object instead of array of userRoles ===
+    // const userRolesData = await user.$add(
+    //   'userRoles',
+    //   roles.map((item) => new UserRole({ ...item })),
+    //   { transaction },
+    // );
+    // user.userRoles = userRolesData as UserRole[];
+    // ==============================================================
+    return user;
   }
 }
