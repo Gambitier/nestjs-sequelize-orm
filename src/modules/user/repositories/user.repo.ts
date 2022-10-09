@@ -17,6 +17,10 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Transaction } from 'sequelize';
 
 /////////////////////////////////////////////////////
+type UserCreateDomainModelWithoutUserRoles = Omit<
+  CreateUserDomainModel,
+  'userRoles'
+>;
 
 @Injectable()
 export class UserRepository implements IUserRepository {
@@ -62,10 +66,8 @@ export class UserRepository implements IUserRepository {
     });
 
     delete userCreateDomainModel.userRoles;
-    const userCreateArgs = userCreateDomainModel as Omit<
-      CreateUserDomainModel,
-      'userRoles'
-    >;
+    const userCreateArgs =
+      userCreateDomainModel as UserCreateDomainModelWithoutUserRoles;
 
     const sequelize = await Database.instance().getSequelizeInstance();
 
