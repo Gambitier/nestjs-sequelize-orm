@@ -1,4 +1,5 @@
 import { UpdatePasswordDto } from '@modules/auth/dto';
+import { CreateUserEducationInstituteDto } from '@modules/education-institute/dto/request-dto/create.user.eduction.institute.dto';
 import {
   CreateUserDomainModel,
   UserDomainModel,
@@ -19,6 +20,13 @@ export class UserService implements IUserService {
     private userRepository: IUserRepository,
   ) {
     //
+  }
+
+  async createUserEducationInstitute(
+    educationInstituteId: string,
+    dto: CreateUserEducationInstituteDto,
+  ): Promise<boolean> {
+    throw new Error('Method not implemented.');
   }
 
   resetUserPassword(
