@@ -1,6 +1,7 @@
 import { UserRoleEnum } from '@modules/auth/common';
 import { UpdatePasswordDto } from '@modules/auth/dto';
 import { IDatabaseErrorHandler } from '@modules/database-error-handler/database.error.handler.interface';
+import { DataNotFoundError } from '@modules/database-error-handler/errors';
 import { Database } from '@modules/database/database.providers';
 import { User } from '@modules/database/entities/user.entity';
 import {
@@ -46,8 +47,25 @@ export class UserRepository implements IUserRepository {
     throw new Error('Method not implemented.');
   }
 
-  findFirstByEmailOrThrow(email: string): Promise<UserDomainModel> {
-    throw new Error('Method not implemented.');
+  async findFirstByEmailOrThrow(email: string): Promise<UserDomainModel> {
+    const user = await User.findOne({
+      where: {
+        email: email,
+      },
+      include: 'userRoles',
+    });
+
+    if (user === null) {
+      throw new DataNotFoundError(`user with email: ${email} not found`);
+    }
+
+    const domainModel: UserDomainModel = {
+      ...user['dataValues'],
+      gender: user.gender as GenderEnum,
+      userRoles: user.userRoles,
+    };
+
+    return domainModel;
   }
 
   async createUser(
