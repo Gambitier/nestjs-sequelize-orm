@@ -66,6 +66,7 @@ export class UserRepository implements IUserRepository {
     });
 
     delete userCreateDomainModel.userRoles;
+    // UserCreationAttributes is equivalent/same as UserCreateDomainModelWithoutUserRoles
     const userCreateArgs =
       userCreateDomainModel as UserCreateDomainModelWithoutUserRoles;
 
