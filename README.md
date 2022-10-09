@@ -1,5 +1,12 @@
 # Nestjs & Sequelize
 
+## Usage
+
+1. Copy `.env.sample` to same location and rename it to `.env`
+2. Create database with name set in the `.env` file with key `DB_NAME_DEVELOPMENT`
+3. Run the command `npm install`
+4. To run the server in the watch mode, use command `npm run start:dev`
+
 ## Nestjs Architeture
 
 ![image](https://user-images.githubusercontent.com/22792359/194728595-2668569d-aa02-4804-8798-ce7900b461c6.png)
@@ -30,3 +37,10 @@ npm i -g @nestjs/cli
 1. [How to make insert with relations](https://github.com/sequelize/sequelize-typescript/issues/723)
 
     ![image](https://user-images.githubusercontent.com/22792359/194730042-fd347226-804f-451f-9a08-336e2fce7a09.png)
+
+
+## TODOs
+
+1. Create many to many relation between `User` and `EducationInstitute`
+   1. create `POST education-institutes/`
+   2. create `POST users/education-institute`

@@ -17,6 +17,10 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Transaction } from 'sequelize';
 
 /////////////////////////////////////////////////////
+type UserCreateDomainModelWithoutUserRoles = Omit<
+  CreateUserDomainModel,
+  'userRoles'
+>;
 
 @Injectable()
 export class UserRepository implements IUserRepository {
@@ -62,43 +66,21 @@ export class UserRepository implements IUserRepository {
     });
 
     delete userCreateDomainModel.userRoles;
-    const userCreateArgs = userCreateDomainModel as Omit<
-      CreateUserDomainModel,
-      'userRoles'
-    >;
+    // UserCreationAttributes is equivalent/same as UserCreateDomainModelWithoutUserRoles
+    const userCreateArgs =
+      userCreateDomainModel as UserCreateDomainModelWithoutUserRoles;
 
     const sequelize = await Database.instance().getSequelizeInstance();
 
     let user: User;
     try {
       await sequelize.transaction(async (transaction: Transaction) => {
-        user = await User.create<User>(userCreateArgs, {
+        user = await this.createUserWithUserRoles(
+          user,
+          userCreateArgs,
           transaction,
-        });
-
-        // for any errors, transaction will be rolled back
-        // if (user) {
-        //   throw new Error('temp');
-        // }
-
-        roles.forEach((role) => {
-          role.userId = user.id;
-        });
-
-        user.userRoles = await UserRole.bulkCreate(roles, {
-          transaction,
-        });
-
-        // ================= Alternative to bulkCreate ==================
-        // https://github.com/sequelize/sequelize-typescript/#type-safe-usage-of-auto-generated-functions
-        // === But this returned object instead of array of userRoles ===
-        // const userRolesData = await user.$add(
-        //   'userRoles',
-        //   roles.map((item) => new UserRole({ ...item })),
-        //   { transaction },
-        // );
-        // user.userRoles = userRolesData as UserRole[];
-        // ==============================================================
+          roles,
+        );
       });
     } catch (err) {
       this._databaseErrorHandler.HandleError(err);
@@ -116,5 +98,41 @@ export class UserRepository implements IUserRepository {
     };
 
     return domainModel;
+  }
+
+  private async createUserWithUserRoles(
+    user: User,
+    userCreateArgs: UserCreateDomainModelWithoutUserRoles,
+    transaction: Transaction,
+    roles: UserRoleCreationAttributes[],
+  ) {
+    user = await User.create<User>(userCreateArgs, {
+      transaction,
+    });
+
+    // for any errors, transaction will be rolled back
+    // if (user) {
+    //   throw new Error('temp');
+    // }
+    roles.forEach((role) => {
+      role.userId = user.id;
+    });
+
+    user.userRoles = await UserRole.bulkCreate(roles, {
+      transaction,
+    });
+
+    // ================= Alternative to bulkCreate ==================
+    // https://github.com/sequelize/sequelize-typescript/#type-safe-usage-of-auto-generated-functions
+    // https://sequelize.org/docs/v6/core-concepts/assocs/#special-methodsmixins-added-to-instances
+    // === TODO: fix: But this returned object instead of array of userRoles ===
+    // const userRolesData = await user.$add(
+    //   'userRoles',
+    //   roles.map((item) => new UserRole({ ...item })),
+    //   { transaction },
+    // );
+    // user.userRoles = userRolesData as UserRole[];
+    // ==============================================================
+    return user;
   }
 }

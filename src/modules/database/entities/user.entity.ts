@@ -20,22 +20,22 @@ interface UserAttributes {
   id: string;
   prefix: string;
   firstName: string;
-  middleName: string;
+  middleName?: string;
   lastName: string;
   email: string;
   phone: string;
   gender: string;
   password: string;
-  dateOfBirth: Date;
+  dateOfBirth?: Date;
   createdAt: Date;
   updatedAt: Date;
-  deletedAt: Date;
-  userRoles: UserRole[];
+  deletedAt?: Date;
+  userRoles?: UserRole[];
 }
 
 type UserCreationAttributes = Optional<
   UserAttributes,
-  'id' | 'deletedAt' | 'userRoles'
+  'id' | 'deletedAt' | 'middleName' | 'userRoles'
 >;
 
 @Table({
@@ -77,7 +77,7 @@ export class User extends Model<UserAttributes, UserCreationAttributes> {
 
   @Column({
     type: DataType.STRING,
-    allowNull: false,
+    allowNull: true,
   })
   middleName: string;
 

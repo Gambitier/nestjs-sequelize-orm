@@ -21,10 +21,10 @@ interface UserRoleAttributes {
   id: string;
   role: string;
   userId: string;
-  user: User;
+  user?: User;
   createdAt: Date;
   updatedAt: Date;
-  deletedAt: Date;
+  deletedAt?: Date;
 }
 
 export type UserRoleCreationAttributes = Optional<
